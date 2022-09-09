@@ -59,11 +59,11 @@ public final class VanillaDiffHtmlBuilder {
 
         TagIndex ltags = new TagIndex();
         for (Tree t: diff.getSrcTC().getRoot().preOrder()) {
-            if (c.getMovedSrcs().contains(t)) {
+            if (c.getMovedSrcs().containsKey(t)) {
 //                mappingIds.put(diff.getMappings().getDstForSrc(t).iterator().next(), mId);
                 ltags.addStartTag(t.getPos(), String.format(ID_SPAN, uId++));
                 ltags.addTags(t.getPos(), String.format(
-                                SRC_MV_SPAN, "token mv", mId++, tooltip(diff.getSrcTC(), t)), t.getEndPos(), END_SPAN);
+                                SRC_MV_SPAN, "token mv", c.getMovedSrcs().get(t), tooltip(diff.getSrcTC(), t)), t.getEndPos(), END_SPAN);
             }
             if (c.getUpdatedSrcs().contains(t)) {
 //                mappingIds.put(diff.getMappings().getDstForSrc(t).iterator().next(), mId);
@@ -102,12 +102,12 @@ public final class VanillaDiffHtmlBuilder {
 
         TagIndex rtags = new TagIndex();
         for (Tree t: diff.getDstTC().getRoot().preOrder()) {
-            if (c.getMovedDsts().contains(t)) {
+            if (c.getMovedDsts().containsKey(t)) {
 //                int dId = mappingIds.getInt(t);
-                int dId = 0;
+
                 rtags.addStartTag(t.getPos(), String.format(ID_SPAN, uId++));
                 rtags.addTags(t.getPos(), String.format(
-                                DST_MV_SPAN, "token mv", dId, tooltip(diff.getDstTC(), t)), t.getEndPos(), END_SPAN);
+                                DST_MV_SPAN, "token mv", c.getMovedDsts().get(t), tooltip(diff.getDstTC(), t)), t.getEndPos(), END_SPAN);
             }
             if (c.getUpdatedDsts().contains(t)) {
 //                int dId = mappingIds.getInt(t);

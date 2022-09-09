@@ -49,10 +49,12 @@ public class OnlyRootsClassifier extends AbstractITreeClassifier {
 //                srcUpdTrees.add(a.getNode());
 //                dstUpdTrees.addAll(diff.getMappings().getDstForSrc(a.getNode()));
 //            }
-//            else if (a instanceof Move) {
-//                srcMvTrees.add(a.getNode());
+            else if (a instanceof Move) {
+                srcMvTrees.put(a.getNode(),(a.getNode().getMetrics().hash));
 //                dstMvTrees.addAll(diff.getMappings().getDstForSrc(a.getNode()));
-//            }
+                dstMvTrees.put(((Move) a).getParent(), (a.getNode().getMetrics().hash));
+//                dstMvTrees.addAll(((Move) a).getParent());
+            }
 //            //TODO: Important
 //            else if (a instanceof MultiMove)
 //            {

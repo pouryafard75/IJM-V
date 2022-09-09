@@ -27,7 +27,7 @@ public interface TreeClassifier {
     /**
      * Return the set of moved nodes in the source AST.
      */
-    Set<Tree> getMovedSrcs();
+    Map<Tree,Integer> getMovedSrcs();
 
     /**
      * Return the set of updated nodes in the destination AST.
@@ -42,7 +42,7 @@ public interface TreeClassifier {
     /**
      * Return the set of moved nodes in the destination AST.
      */
-    Set<Tree> getMovedDsts();
+    Map<Tree,Integer> getMovedDsts();
 
 
     Map<Tree, Action> getMultiMapSrc();

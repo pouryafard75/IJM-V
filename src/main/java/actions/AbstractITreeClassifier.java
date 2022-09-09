@@ -17,9 +17,9 @@ public abstract class AbstractITreeClassifier implements TreeClassifier {
 
     protected final Set<Tree> dstUpdTrees = new HashSet<>();
 
-    protected final Set<Tree> srcMvTrees = new HashSet<>();
+    protected final Map<Tree,Integer> srcMvTrees = new HashMap<>();
 
-    protected final Set<Tree> dstMvTrees = new HashSet<>();
+    protected final Map<Tree,Integer> dstMvTrees = new HashMap<>();
 
     protected final Set<Tree> srcDelTrees = new HashSet<>();
 
@@ -48,11 +48,11 @@ public abstract class AbstractITreeClassifier implements TreeClassifier {
         return dstUpdTrees;
     }
 
-    public Set<Tree> getMovedSrcs() {
+    public Map<Tree,Integer> getMovedSrcs() {
         return srcMvTrees;
     }
 
-    public Set<Tree> getMovedDsts() {
+    public Map<Tree,Integer> getMovedDsts() {
         return dstMvTrees;
     }
 

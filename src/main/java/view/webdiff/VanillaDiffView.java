@@ -21,9 +21,11 @@ public class VanillaDiffView implements Renderable {
     private String srcFileName;
     private String dstFileName;
     private boolean dump;
+    String toolname;
 
-    public VanillaDiffView(String srcFileName, String dstFileName, String srcFileContent, String dstFileContent, ASTDiff diff, boolean dump) throws IOException {
+    public VanillaDiffView(String toolname,String srcFileName, String dstFileName, String srcFileContent, String dstFileContent, ASTDiff diff, boolean dump) throws IOException {
         this.srcFileName = srcFileName;
+        this.toolname = toolname;
         this.dstFileName = dstFileName;
         this.dump = dump;
         rawHtmlDiff = new VanillaDiffHtmlBuilder(srcFileContent, dstFileContent, diff);

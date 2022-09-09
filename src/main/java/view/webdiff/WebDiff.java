@@ -44,10 +44,19 @@ public class WebDiff {
     public static final String BOOTSTRAP_JS_URL = "https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js";
     private String srcFilePath,dstFilePath;
     private ASTDiff astDiff;
-    public WebDiff(String srcFilePath, String dstFilePath, ASTDiff astDiff) {
+    String toolname;
+    public WebDiff(String srcFilePath, String dstFilePath, ASTDiff astDiff,String csvPath) {
         this.srcFilePath = srcFilePath;
         this.dstFilePath = dstFilePath;
         this.astDiff = astDiff;
+        this.toolname = findToolName(csvPath);
+    }
+
+    private String findToolName(String csvPath) {
+        int li = csvPath.lastIndexOf("/");
+        String fname = csvPath.substring(li);
+        int index = fname.indexOf("-");
+        return fname.substring(0 , index);
     }
 
 
@@ -73,7 +82,7 @@ public class WebDiff {
 //            Diff diff = getDiff(pair.first.getAbsolutePath(), pair.second.getAbsolutePath());
             String srcContent = FileUtils.readFileToString(new File(srcFilePath));
             String dstContent = FileUtils.readFileToString(new File(dstFilePath));
-            Renderable view = new VanillaDiffView("","", srcContent,dstContent,astDiff, false);
+            Renderable view = new VanillaDiffView(toolname,"","", srcContent,dstContent,astDiff, false);
             return render(view);
         });
 //        get("/monaco-diff/:id", (request, response) -> {

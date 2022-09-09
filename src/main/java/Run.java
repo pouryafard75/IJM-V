@@ -1,7 +1,9 @@
 import actions.ASTDiff;
 import actions.EditScript;
 import actions.model.Action;
+import actions.model.Delete;
 import actions.model.Insert;
+import actions.model.Move;
 import jdt.JdtVisitor;
 import tree.Tree;
 import tree.TreeContext;
@@ -33,15 +35,11 @@ public class Run {
     public static void main(String[] args) {
         String srcFilePath = "D:\\TestCases\\v1\\DistributedCacheStream.java";
         String dstFilePath = "D:\\TestCases\\v2\\DistributedCacheStream.java";
-
         String csvPath = "test.csv";
         Tree srcTree = getTreeByFilePath(srcFilePath);
         Tree dstTree = getTreeByFilePath(dstFilePath);
         List<IJMActionModel> ijmActions = makeActionsFromCSV(csvPath);
-        EditScript editScript = new EditScript();
-        for (IJMActionModel ijmAction : ijmActions) {
-            editScript.add(makeActionFromIJMAction(ijmAction,srcTree,dstTree));
-        }
+        EditScript editScript = makeActionFromIJMAction(ijmActions,srcTree,dstTree);
 
         TreeContext srcTreeContext = new TreeContext();
         srcTreeContext.setRoot(srcTree);
@@ -54,7 +52,7 @@ public class Run {
         ASTDiff astDiff = new ASTDiff(srcTreeContext,dstTreeContext,null);
         astDiff.setEditScript(editScript);
 
-        WebDiff webDiff = new WebDiff(srcFilePath,dstFilePath,astDiff);
+        WebDiff webDiff = new WebDiff(srcFilePath,dstFilePath,astDiff,csvPath);
         webDiff.run();
 
     }
@@ -85,25 +83,31 @@ public class Run {
         return treeContext.getRoot();
     }
 
-    private static Action makeActionFromIJMAction(IJMActionModel ijmActionModel , Tree src, Tree dst){
-        Action action = null;
-        Tree srcTree = src.getTreeBetweenPositions(ijmActionModel.srcStartOffset, ijmActionModel.srcEndOffset);
-        Tree dstTree = dst.getTreeBetweenPositions(ijmActionModel.dstStartOffset, ijmActionModel.dstEndOffset);
-        switch (ijmActionModel.getActionType())
-        {
-            case "INS" :
-                action = new Insert(dstTree,null,-1);
-                break;
-            case "MOV" :
-
-                break;
-            case "DEL":
-                action = new Insert(srcTree,null,-1);
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + ijmActionModel.getActionType());
+    private static EditScript makeActionFromIJMAction(List<IJMActionModel> ijmActions , Tree src, Tree dst){
+        EditScript editScript = new EditScript();
+        Tree srcCopy = src.deepCopy();
+        Tree dstCopy = dst.deepCopy();
+        for (IJMActionModel ijmAction : ijmActions) {
+            Action action = null;
+            Tree srcTree = src.getTreeBetweenPositions(ijmAction.srcStartOffset, ijmAction.srcEndOffset);
+            Tree dstTree = dst.getTreeBetweenPositions(ijmAction.dstStartOffset, ijmAction.dstEndOffset);
+            switch (ijmAction.getActionType()) {
+                case "INS":
+                    action = new Insert(dstTree, null, -1);
+                    break;
+                case "MOV":
+                    System.out.println("");
+                    action = new Move(srcTree, dstTree, -1);
+                    break;
+                case "DEL":
+                    action = new Delete(srcTree);
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + ijmAction.getActionType());
+            }
+            editScript.add(action);
         }
-        return action;
+        return editScript;
     }
 
 

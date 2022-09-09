@@ -21,50 +21,42 @@
 currentMapping = 0;
 
 if (typeof String.prototype.startsWith != 'function') {
-  String.prototype.startsWith = function (str){
-    return this.slice(0, str.length) == str;
-  };
+    String.prototype.startsWith = function (str){
+        return this.slice(0, str.length) == str;
+    };
 }
 
 function getMappedElement(eltId) {
-	if (eltId.startsWith("move-src")) {
-		return eltId.replace("src","dst");  	 	
-  	}
-  	else {
-  		return eltId.replace("dst","src");
-  	}
+    if (eltId.startsWith("move-src")) {
+        return eltId.replace("src","dst");
+    }
+    else {
+        return eltId.replace("dst","src");
+    }
 }
 
 function nextMapping() {
-	if (currentMapping == 0) {
-		currentMapping = 1;
-		return "#mapping-" + currentMapping.toString();
-	} else {
-		currentMapping++;
-		
-		if ($("#mapping-" + currentMapping.toString()).length > 0) {
-			return "#mapping-" + currentMapping.toString();
-		} else {
-			currentMapping = 1;
-			return "#mapping-" + currentMapping.toString();		
-		}		
-	}
+    console.log(currentMapping);
+    if (currentMapping == 0) {
+        currentMapping = 1;
+        return "#mapping-" + currentMapping.toString();
+    } else {
+        currentMapping++;
+
+        if ($("#mapping-" + currentMapping.toString()).length > 0) {
+            return "#mapping-" + currentMapping.toString();
+        } else {
+            currentMapping = 1;
+            return "#mapping-" + currentMapping.toString();
+        }
+    }
 }
 
 function isSrc(eltId) {
-	return eltId.startsWith("move-src");
+    return eltId.startsWith("move-src");
 }
 
 $(function() {
-    $("body").keypress(function (event) {
-        switch(event.which) {
-            case 110:
-                var mapping = nextMapping();
-                $('html, body').animate({scrollTop: $(mapping).offset().top - 200}, 100);
-                break;
-        }
-    });
-
     // highlight
     $("span.mv.token, span.token.upd").click(function(event) {
         if ($(this).hasClass("selected")) {
@@ -73,31 +65,67 @@ $(function() {
             $("span.mv.token, span.token.upd").removeClass("selected");
             var eltId = $(this).attr("id");
             var refEltId = getMappedElement(eltId);
+            console.log(refEltId);
+            console.log($("#" + refEltId).position());
             $("#" + refEltId).addClass("selected");
             $(this).addClass("selected");
-            var sel = "#dst";
-            if (isSrc(refEltId))
-                var sel = "#src";
-            $div = $(sel);
-            $span = $("#" + refEltId);
+            var elmntToView = document.getElementById(refEltId);
+            elmntToView.scrollIntoView({ alignToTop : false, behavior: 'smooth'});
+
+            // if (isSrc(eltId))
+            // {
+            //     $("#right").animate({scrollTo: $("#" + refEltId).position().top - 200}, 500)
+            //     console.log("right position")
+            //     console.log($("#" + refEltId).position().top - 200);
+            // }
+            // else
+            // {
+            //     $("#left").animate({scrollTo: $("#" + refEltId).position().top - 200}, 500);
+            //     console.log("left position");
+            //     console.log($("#" + refEltId).position.top - 200);
+            // }
+            // var sel = "#dst";
+            // if (isSrc(refEltId))
+            //     var sel = "#src";
+            // $div = $(sel);
+            // $span = $("#" + refEltId);
+
         }
         event.stopPropagation();
     });
+
+    $("span.mm.token").click(function(event) {
+        if ($(this).hasClass("selected")) {
+            $("span.mm.token").removeClass("selected");
+        } else {
+            $("span.mv.token, span.token.upd, span.mm.token").removeClass("selected");
+            var gid = $(this).attr("gid");
+            $('span[gid=' + gid + ']').each(function() {
+                $(this).addClass("selected");
+            })
+        }
+        event.stopPropagation();
+    });
+
+
 
     $("span.add.token, span.token.del").click(function(event) {
         $("span.mv.token, span.token.upd").removeClass("selected");
         event.stopPropagation();
     });
 
-    // tooltip
-    $("span.token").hover(
-    	function (event) {
-    		$(this).tooltip('show');
-    		event.stopPropagation();
-    	},
-    	function (event) {
-    		$(this).tooltip('hide');
-    		event.stopPropagation();
-    	}
-    );
+//    // tooltip
+//    $("span.token").hover(
+//    	function (event) {
+//    	    console.log("yay")
+//    		$(this).tooltip('show');
+//    		event.stopPropagation();
+//    	},
+//    	function (event) {
+//    		$(this).tooltip('hide');
+//    		event.stopPropagation();
+//    	}
+//    );
+    $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+
 });
